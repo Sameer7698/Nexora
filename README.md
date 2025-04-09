@@ -1,8 +1,7 @@
  # 🧠 AI Career Coach
 
 A full-stack AI-powered career guidance platform built using **Next.js**, **Neon DB**, **Clerk**, **Inngest**, **Shadcn UI**, and **Gemini AI**.  
-This project is developed as part of an internship and follows the tutorial by [Piyush Garg](https://www.youtube.com/watch?v=UbXpRv5ApKA).
-
+ 
 ---
 
 ## 🚀 Live Demo
@@ -66,7 +65,7 @@ npm run dev
 
 📸 Screenshots
 
-![image](https://github.com/user-attachments/assets/6d0d2811-90ea-4d0c-bbc9-d8975317cf5d)
+(https://github.com/user-attachments/assets/6d0d2811-90ea-4d0c-bbc9-d8975317cf5d)
 
 
 🛠️ Known Issues
