@@ -61,7 +61,31 @@ GEMINI_API_KEY=your_gemini_key
 npx prisma migrate dev
 npm run dev
 
-📸 Screenshots
+## 📸 Screenshots
+
+### 🏠 Home Page
+![Home Page](https://github.com/user-attachments/assets/757fb393-ebcc-4d3f-8ecd-d63cfcf57c13)
+
+---
+
+### 🏭 Industry Insight Section
+![Industry Insight](https://github.com/user-attachments/assets/89b3403d-88ac-4b3e-a6ba-a910bac88c51)
+
+---
+
+### 🎯 Interview Prep Section
+![Interview Prep](https://github.com/user-attachments/assets/e754b580-6d43-47ae-aa8f-f753cba87950)
+
+---
+
+### 📝 Cover Letter Section
+![Cover Letter](https://github.com/user-attachments/assets/fb961175-6c35-40f0-9cde-005bcbb98cf6)
+
+---
+
+### 📄 Resume Builder
+![Resume Builder](https://github.com/user-attachments/assets/3101facd-4e89-46d3-a06c-68e5baedd988)
+
 
 🛠️ Known Issues
 🔐 Login not working on Vercel due to production Clerk + AI API issues
