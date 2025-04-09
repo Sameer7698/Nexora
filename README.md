@@ -1,7 +1,7 @@
- # 🧠 AI Career Coach
+# 🧠 AI Career Coach
 
-A full-stack AI-powered career guidance platform built using **Next.js**, **Neon DB**, **Clerk**, **Inngest**, **Shadcn UI**, and **Gemini AI**.  
- 
+A full-stack AI-powered career guidance platform built using **Next.js**, **Neon DB**, **Clerk**, **Inngest**, **Shadcn UI**, and **Gemini AI**.
+
 ---
 
 ## 🚀 Live Demo
@@ -44,7 +44,6 @@ git clone https://github.com/your-username/ai-career-coach.git
 cd ai-career-coach
 npm install
 
-
 🔐 Create .env.local and add your variables:
 DATABASE_URL=your_neon_connection_string
 
@@ -62,19 +61,20 @@ GEMINI_API_KEY=your_gemini_key
 npx prisma migrate dev
 npm run dev
 
-
 📸 Screenshots
-
-(https://github.com/user-attachments/assets/6d0d2811-90ea-4d0c-bbc9-d8975317cf5d)
-
 
 🛠️ Known Issues
 🔐 Login not working on Vercel due to production Clerk + AI API issues
 
 ✅ Fully working on localhost — recommended for testing
 
+
 📬 Contact
 📧 sameersaurabh658@gmail.com
 🔗 GitHub Profile
 
+yaml
+Copy code
 
+
+ 
