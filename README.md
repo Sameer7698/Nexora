@@ -4,12 +4,7 @@ A full-stack AI-powered career guidance platform built using **Next.js**, **Neon
 
 ---
 
-## 🚀 Live Demo
 
-🌐 [https://aicareercoach-chi.vercel.app](https://aicareercoach-chi.vercel.app)
-
-⚠️ **Note**: The live site’s login is currently **not working** due to deployment issues with **Clerk authentication** on Vercel and **AI integration**.  
-✅ The app works perfectly in **local development**.
 
 ---
 
