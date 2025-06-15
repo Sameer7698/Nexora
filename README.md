@@ -2,9 +2,6 @@
 
 A full-stack AI-powered career guidance platform built using **Next.js**, **Neon DB**, **Clerk**, **Inngest**, **Shadcn UI**, and **Gemini AI**.
 
----
-
-
 
 ---
 
