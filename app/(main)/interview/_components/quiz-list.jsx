@@ -3,20 +3,9 @@
 import { useState } from "react";
 import { format } from "date-fns";
 import { useRouter } from "next/navigation";
-import { Button } from "@/components/ui/button";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog";
+import Button from "@/components/Button";
+import { Card } from "@/components/Card";
+import { CardContent } from "@/components/CardContent";
 import QuizResult from "./quiz-result";
 
 export default function QuizList({ assessments }) {
@@ -25,47 +14,45 @@ export default function QuizList({ assessments }) {
 
   return (
     <>
-      <Card>
-        <CardHeader>
-          <div className="flex items-center justify-between">
-            <div>
-              <CardTitle className="gradient-title text-3xl md:text-4xl">
-                Recent Quizzes
-              </CardTitle>
-              <CardDescription>
-                Review your past quiz performance
-              </CardDescription>
-            </div>
-            <Button onClick={() => router.push("/interview/mock")}>
-              Start New Quiz
-            </Button>
+      <Card className="bg-black border border-gray-600 text-white">
+        <div className="p-6 border-b border-gray-500 flex items-center justify-between flex-wrap gap-4">
+          <div>
+            <h2 className="text-3xl font-bold">Recent Quizzes</h2>
+            <p className="text-sm text-gray-400">
+              Review your past quiz performance
+            </p>
           </div>
-        </CardHeader>
+          <Button
+            onClick={() => router.push("/interview/mock")}
+            className="bg-blue-600 hover:bg-blue-700 text-white rounded-md px-4 py-2"
+          >
+            Start New Quiz
+          </Button>
+        </div>
+
         <CardContent>
           <div className="space-y-4">
             {assessments?.map((assessment, i) => (
               <Card
                 key={assessment.id}
-                className="cursor-pointer hover:bg-muted/50 transition-colors"
+                className="cursor-pointer hover:bg-gray-800 transition-colors border border-gray-700"
                 onClick={() => setSelectedQuiz(assessment)}
               >
-                <CardHeader>
-                  <CardTitle className="gradient-title text-2xl">
-                    Quiz {i + 1}
-                  </CardTitle>
-                  <CardDescription className="flex justify-between w-full">
-                    <div>Score: {assessment.quizScore.toFixed(1)}%</div>
-                    <div>
+                <div className="p-4 border-b border-gray-600">
+                  <h3 className="text-2xl font-semibold">Quiz {i + 1}</h3>
+                  <div className="text-sm text-gray-400 flex justify-between mt-1">
+                    <span>Score: {assessment.quizScore.toFixed(1)}%</span>
+                    <span>
                       {format(
                         new Date(assessment.createdAt),
                         "MMMM dd, yyyy HH:mm"
                       )}
-                    </div>
-                  </CardDescription>
-                </CardHeader>
+                    </span>
+                  </div>
+                </div>
                 {assessment.improvementTip && (
                   <CardContent>
-                    <p className="text-sm text-muted-foreground">
+                    <p className="text-sm text-gray-400">
                       {assessment.improvementTip}
                     </p>
                   </CardContent>
@@ -76,18 +63,28 @@ export default function QuizList({ assessments }) {
         </CardContent>
       </Card>
 
-      <Dialog open={!!selectedQuiz} onOpenChange={() => setSelectedQuiz(null)}>
-        <DialogContent className="max-w-3xl max-h-[90vh] overflow-y-auto">
-          <DialogHeader>
-            <DialogTitle></DialogTitle>
-          </DialogHeader>
-          <QuizResult
-            result={selectedQuiz}
-            hideStartNew
-            onStartNew={() => router.push("/interview/mock")}
-          />
-        </DialogContent>
-      </Dialog>
+      {/* Dialog modal */}
+      {selectedQuiz && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 px-4">
+          <div className="bg-white text-black rounded-lg shadow-xl w-full max-w-3xl max-h-[90vh] overflow-y-auto p-6">
+            <div className="flex items-center justify-between mb-4">
+              <h2 className="text-lg font-semibold">Quiz Result</h2>
+              <button
+                onClick={() => setSelectedQuiz(null)}
+                className="text-gray-600 hover:text-black text-sm"
+              >
+                Close
+              </button>
+            </div>
+            <QuizResult
+              result={selectedQuiz}
+              hideStartNew
+              onStartNew={() => router.push("/interview/mock")}
+            />
+          </div>
+        </div>
+      )}
     </>
   );
 }
+

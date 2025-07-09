@@ -42,7 +42,7 @@ const HeroSection = () => {
           </h1>
           {/* gradient-title animate-gradient */}
           <p
-            className={`text-xl mt-4 text-gray-700 mx-auto max-w-[600px] text-muted-foreground md:text-xl ${dancingScript.className}`}
+            className={`text-xl mt-4 text-gray-300 mx-auto max-w-[600px] text-muted-foreground md:text-xl ${dancingScript.className}`}
           >
             Unlock AI-powered career tools for smarter prep, stronger resumes,
             and confident interviews.

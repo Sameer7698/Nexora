@@ -1,6 +1,8 @@
+"use client";
+
 import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import Button from "@/components/Button";
 import Quiz from "../_components/quiz";
 
 export default function MockInterviewPage() {
@@ -8,7 +10,7 @@ export default function MockInterviewPage() {
     <div className="container mx-auto space-y-4 py-6">
       <div className="flex flex-col space-y-2 mx-2">
         <Link href="/interview">
-          <Button variant="link" className="gap-2 pl-0">
+          <Button variant="ghost" className="gap-2 pl-0 text-blue-500 hover:underline">
             <ArrowLeft className="h-4 w-4" />
             Back to Interview Preparation
           </Button>
@@ -16,7 +18,7 @@ export default function MockInterviewPage() {
 
         <div>
           <h1 className="text-6xl font-bold gradient-title">Mock Interview</h1>
-          <p className="text-muted-foreground">
+          <p className="text-gray-400">
             Test your knowledge with industry-specific questions
           </p>
         </div>

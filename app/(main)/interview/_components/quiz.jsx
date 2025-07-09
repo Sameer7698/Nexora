@@ -2,16 +2,9 @@
 
 import { useState, useEffect } from "react";
 import { toast } from "sonner";
-import { Button } from "@/components/ui/button";
-import {
-  Card,
-  CardContent,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
-import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
-import { Label } from "@/components/ui/label";
+import Button from "@/components/Button";
+import { Card } from "@/components/Card";
+import { CardContent } from "@/components/CardContent";
 import { generateQuiz, saveQuizResult } from "@/actions/interview";
 import QuizResult from "./quiz-result";
 import useFetch from "@/hooks/use-fetch";
@@ -35,9 +28,11 @@ export default function Quiz() {
     setData: setResultData,
   } = useFetch(saveQuizResult);
 
+  // When quizData changes, reset answers
   useEffect(() => {
-    if (quizData) {
-      setAnswers(new Array(quizData.length).fill(null));
+    if (Array.isArray(quizData)) {
+      setAnswers(Array(quizData.length).fill(null));
+      setCurrentQuestion(0);
     }
   }, [quizData]);
 
@@ -49,7 +44,7 @@ export default function Quiz() {
 
   const handleNext = () => {
     if (currentQuestion < quizData.length - 1) {
-      setCurrentQuestion(currentQuestion + 1);
+      setCurrentQuestion((prev) => prev + 1);
       setShowExplanation(false);
     } else {
       finishQuiz();
@@ -57,13 +52,13 @@ export default function Quiz() {
   };
 
   const calculateScore = () => {
-    let correct = 0;
-    answers.forEach((answer, index) => {
-      if (answer === quizData[index].correctAnswer) {
-        correct++;
-      }
-    });
-    return (correct / quizData.length) * 100;
+    return (
+      (answers.filter(
+        (answer, index) => answer === quizData[index].correctAnswer
+      ).length /
+        quizData.length) *
+      100
+    );
   };
 
   const finishQuiz = async () => {
@@ -72,23 +67,23 @@ export default function Quiz() {
       await saveQuizResultFn(quizData, answers, score);
       toast.success("Quiz completed!");
     } catch (error) {
-      toast.error(error.message || "Failed to save quiz results");
+      toast.error(error?.message || "Failed to save quiz results");
     }
   };
 
   const startNewQuiz = () => {
-    setCurrentQuestion(0);
-    setAnswers([]);
     setShowExplanation(false);
-    generateQuizFn();
+    setAnswers([]);
     setResultData(null);
+    generateQuizFn();
   };
 
+  // Loading state
   if (generatingQuiz) {
-    return <BarLoader className="mt-4" width={"100%"} color="gray" />;
+    return <BarLoader className="mt-4 mx-auto" width="100%" color="gray" />;
   }
 
-  // Show results if quiz is completed
+  //  If quiz is completed
   if (resultData) {
     return (
       <div className="mx-2">
@@ -97,81 +92,90 @@ export default function Quiz() {
     );
   }
 
-  if (!quizData) {
+  //  Start screen (quiz not yet generated)
+  if (!Array.isArray(quizData)) {
     return (
-      <Card className="mx-2">
-        <CardHeader>
-          <CardTitle>Ready to test your knowledge?</CardTitle>
-        </CardHeader>
+      <Card className="mx-2 bg-black text-white border border-gray-700">
         <CardContent>
-          <p className="text-muted-foreground">
-            This quiz contains 10 questions specific to your industry and
-            skills. Take your time and choose the best answer for each question.
+          <h2 className="text-2xl font-bold mb-4">Ready to test your knowledge?</h2>
+          <p className="text-gray-400 mb-6">
+            This quiz contains 10 questions specific to your industry and skills. Take your time and choose the best answer for each question.
           </p>
-        </CardContent>
-        <CardFooter>
-          <Button onClick={generateQuizFn} className="w-full">
+          <Button
+            onClick={generateQuizFn}
+            className="w-full bg-blue-600 hover:bg-blue-700 text-white"
+          >
             Start Quiz
           </Button>
-        </CardFooter>
+        </CardContent>
       </Card>
     );
   }
 
+  //  Main quiz UI
   const question = quizData[currentQuestion];
 
   return (
-    <Card className="mx-2">
-      <CardHeader>
-        <CardTitle>
-          Question {currentQuestion + 1} of {quizData.length}
-        </CardTitle>
-      </CardHeader>
-      <CardContent className="space-y-4">
-        <p className="text-lg font-medium">{question.question}</p>
-        <RadioGroup
-          onValueChange={handleAnswer}
-          value={answers[currentQuestion]}
-          className="space-y-2"
-        >
-          {question.options.map((option, index) => (
-            <div key={index} className="flex items-center space-x-2">
-              <RadioGroupItem value={option} id={`option-${index}`} />
-              <Label htmlFor={`option-${index}`}>{option}</Label>
-            </div>
-          ))}
-        </RadioGroup>
+    <Card className="mx-2 bg-black text-white border border-gray-700">
+      <CardContent className="space-y-6">
+        <div className="flex justify-between items-center">
+          <h2 className="text-xl font-bold">
+            Question {currentQuestion + 1} of {quizData.length}
+          </h2>
+        </div>
 
-        {showExplanation && (
-          <div className="mt-4 p-4 bg-muted rounded-lg">
-            <p className="font-medium">Explanation:</p>
-            <p className="text-muted-foreground">{question.explanation}</p>
-          </div>
+        {question ? (
+          <>
+            <p className="text-lg font-medium">{question.question}</p>
+
+            <div className="space-y-3">
+              {question.options.map((option, index) => (
+                <label key={index} className="flex items-center space-x-3">
+                  <input
+                    type="radio"
+                    name={`question-${currentQuestion}`}
+                    value={option}
+                    checked={answers[currentQuestion] === option}
+                    onChange={() => handleAnswer(option)}
+                    className="accent-blue-500"
+                  />
+                  <span className="text-gray-300">{option}</span>
+                </label>
+              ))}
+            </div>
+
+            {showExplanation && (
+              <div className="bg-gray-800 p-4 rounded-lg border border-gray-600">
+                <p className="font-medium text-white mb-1">Explanation:</p>
+                <p className="text-gray-300">{question.explanation}</p>
+              </div>
+            )}
+          </>
+        ) : (
+          <p className="text-sm text-red-400">Question not found</p>
         )}
-      </CardContent>
-      <CardFooter className="flex justify-between">
-        {!showExplanation && (
-          <Button
-            onClick={() => setShowExplanation(true)}
-            variant="outline"
-            disabled={!answers[currentQuestion]}
-          >
-            Show Explanation
-          </Button>
-        )}
-        <Button
-          onClick={handleNext}
-          disabled={!answers[currentQuestion] || savingResult}
-          className="ml-auto"
-        >
-          {savingResult && (
-            <BarLoader className="mt-4" width={"100%"} color="gray" />
+
+        <div className="flex justify-between pt-4">
+          {!showExplanation && (
+            <Button
+              onClick={() => setShowExplanation(true)}
+              className="border border-gray-400 text-white bg-transparent hover:bg-gray-700"
+              disabled={!answers[currentQuestion]}
+            >
+              Show Explanation
+            </Button>
           )}
-          {currentQuestion < quizData.length - 1
-            ? "Next Question"
-            : "Finish Quiz"}
-        </Button>
-      </CardFooter>
+          <Button
+            onClick={handleNext}
+            disabled={!answers[currentQuestion] || savingResult}
+            className="bg-blue-600 hover:bg-blue-700 text-white"
+          >
+            {currentQuestion < quizData.length - 1
+              ? "Next Question"
+              : "Finish Quiz"}
+          </Button>
+        </div>
+      </CardContent>
     </Card>
   );
 }

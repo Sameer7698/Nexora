@@ -1,134 +1,100 @@
 "use client";
 
 import { useState } from "react";
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { toast } from "sonner";
-import { Loader2 } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
-import { generateCoverLetter } from "@/actions/cover-letter";
-import useFetch from "@/hooks/use-fetch";
-import { coverLetterSchema } from "@/app/lib/schema";
-import { useEffect } from "react";
 import { useRouter } from "next/navigation";
+import { toast } from "sonner";
+import Button from "@/components/Button";
+import { Card } from "@/components/Card";
+import { CardContent } from "@/components/CardContent";
+import { generateCoverLetter } from "@/actions/cover-letter";
 
 export default function CoverLetterGenerator() {
+  const [jobTitle, setJobTitle] = useState("");
+  const [companyName, setCompanyName] = useState("");
+  const [letter, setLetter] = useState("");
+  const [loading, setLoading] = useState(false);
+
   const router = useRouter();
 
-  const {
-    register,
-    handleSubmit,
-    formState: { errors },
-    reset,
-  } = useForm({
-    resolver: zodResolver(coverLetterSchema),
-  });
-
-  const {
-    loading: generating,
-    fn: generateLetterFn,
-    data: generatedLetter,
-  } = useFetch(generateCoverLetter);
-
-  // Update content when letter is generated
-  useEffect(() => {
-    if (generatedLetter) {
-      toast.success("Cover letter generated successfully!");
-      router.push(`/ai-cover-letter/${generatedLetter.id}`);
-      reset();
+  const handleGenerate = async () => {
+    if (!jobTitle || !companyName) {
+      toast.error("Please fill in both fields.");
+      return;
     }
-  }, [generatedLetter]);
 
-  const onSubmit = async (data) => {
+    setLoading(true);
+    setLetter("");
+
     try {
-      await generateLetterFn(data);
-    } catch (error) {
-      toast.error(error.message || "Failed to generate cover letter");
+      const result = await generateCoverLetter({
+        jobTitle,
+        companyName,
+        jobDescription: "", // Optional for now
+      });
+
+      setLetter(result.content);
+      toast.success("Cover letter created successfully!");
+      router.push(`/ai-cover-letter/${result.id}`);
+    } catch (err) {
+      console.error(err);
+      toast.error("Failed to generate cover letter.");
+    } finally {
+      setLoading(false);
     }
   };
 
   return (
-    <div className="space-y-6">
-      <Card>
-        <CardHeader>
-          <CardTitle>Job Details</CardTitle>
-          <CardDescription>
-            Provide information about the position you're applying for
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-            {/* Form fields remain the same */}
-            <div className="grid grid-cols-2 gap-4">
-              <div className="space-y-2">
-                <Label htmlFor="companyName">Company Name</Label>
-                <Input
-                  id="companyName"
-                  placeholder="Enter company name"
-                  {...register("companyName")}
+    <div className="min-h-screen py-12 px-4 sm:px-6 lg:px-8 text-gray-900">
+      <div className="max-w-2xl mx-auto">
+        <Card className="bg-black border p-4 border-gray-500 text-white">
+          <CardContent>
+            <h1 className="text-3xl font-bold mb-6">Generate a Cover Letter</h1>
+
+            <div className="space-y-4">
+              <div>
+                <label className="block text-sm font-semibold text-white">
+                  Job Title
+                </label>
+                <input
+                  type="text"
+                  value={jobTitle}
+                  onChange={(e) => setJobTitle(e.target.value)}
+                  placeholder="e.g., Frontend Developer"
+                  className="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white text-gray-900"
                 />
-                {errors.companyName && (
-                  <p className="text-sm text-red-500">
-                    {errors.companyName.message}
-                  </p>
-                )}
               </div>
 
-              <div className="space-y-2">
-                <Label htmlFor="jobTitle">Job Title</Label>
-                <Input
-                  id="jobTitle"
-                  placeholder="Enter job title"
-                  {...register("jobTitle")}
+              <div>
+                <label className="block text-sm font-semibold text-white">
+                  Company Name
+                </label>
+                <input
+                  type="text"
+                  value={companyName}
+                  onChange={(e) => setCompanyName(e.target.value)}
+                  placeholder="e.g., SAP Labs"
+                  className="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white text-gray-900"
                 />
-                {errors.jobTitle && (
-                  <p className="text-sm text-red-500">
-                    {errors.jobTitle.message}
-                  </p>
-                )}
               </div>
-            </div>
 
-            <div className="space-y-2">
-              <Label htmlFor="jobDescription">Job Description</Label>
-              <Textarea
-                id="jobDescription"
-                placeholder="Paste the job description here"
-                className="h-32"
-                {...register("jobDescription")}
-              />
-              {errors.jobDescription && (
-                <p className="text-sm text-red-500">
-                  {errors.jobDescription.message}
-                </p>
-              )}
-            </div>
-
-            <div className="flex justify-end">
-              <Button type="submit" disabled={generating}>
-                {generating ? (
-                  <>
-                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                    Generating...
-                  </>
-                ) : (
-                  "Generate Cover Letter"
-                )}
+              <Button
+                onClick={handleGenerate}
+                disabled={loading}
+                className="bg-blue-600 hover:bg-blue-700 text-white rounded-md px-6 py-2 mx-auto block"
+              >
+                {loading ? "Generating..." : "Generate Letter"}
               </Button>
             </div>
-          </form>
-        </CardContent>
-      </Card>
+
+            {letter && (
+              <div className="mt-6 bg-gray-100 border border-gray-300 p-4 rounded-lg whitespace-pre-line text-gray-800">
+                <h2 className="text-lg font-semibold mb-2">Generated Letter</h2>
+                <p>{letter}</p>
+              </div>
+            )}
+          </CardContent>
+        </Card>
+      </div>
     </div>
   );
 }
