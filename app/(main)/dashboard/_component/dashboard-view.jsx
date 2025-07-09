@@ -1,3 +1,4 @@
+
 "use client";
 
 import React from "react";
@@ -18,18 +19,52 @@ import {
   Brain,
 } from "lucide-react";
 import { format, formatDistanceToNow } from "date-fns";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import { Progress } from "@/components/ui/progress";
 
+// ✅ Local reusable components
+function Card({ className = "", children, ...props }) {
+  return (
+    <div className={`rounded-lg border text-white bg-black shadow-sm ${className}`} {...props}>
+      {children}
+    </div>
+  );
+}
+
+function CardContent({ className = "", children, ...props }) {
+  return (
+    <div className={`p-6 ${className}`} {...props}>
+      {children}
+    </div>
+  );
+}
+
+function Badge({ children, variant = "default", className = "" }) {
+  const variants = {
+    default: "bg-blue-600 text-white",
+    outline: "border border-gray-400 text-white",
+    secondary: "bg-gray-700 text-white",
+  };
+  return (
+    <span
+      className={`inline-block px-3 py-1 text-xs font-medium rounded-full ${variants[variant]} ${className}`}
+    >
+      {children}
+    </span>
+  );
+}
+
+function Progress({ value, className = "" }) {
+  return (
+    <div className={`w-full h-2 bg-gray-700 rounded-full overflow-hidden ${className}`}>
+      <div
+        className="h-full bg-green-500 transition-all duration-300"
+        style={{ width: `${value}%` }}
+      ></div>
+    </div>
+  );
+}
+
+// ✅ Main Dashboard View
 const DashboardView = ({ insights }) => {
-  // Transform salary data for the chart
   const salaryData = insights.salaryRanges.map((range) => ({
     name: range.role,
     min: range.min / 1000,
@@ -66,107 +101,89 @@ const DashboardView = ({ insights }) => {
   const OutlookIcon = getMarketOutlookInfo(insights.marketOutlook).icon;
   const outlookColor = getMarketOutlookInfo(insights.marketOutlook).color;
 
-  // Format dates using date-fns
   const lastUpdatedDate = format(new Date(insights.lastUpdated), "dd/MM/yyyy");
-  const nextUpdateDistance = formatDistanceToNow(
-    new Date(insights.nextUpdate),
-    { addSuffix: true }
-  );
+  const nextUpdateDistance = formatDistanceToNow(new Date(insights.nextUpdate), {
+    addSuffix: true,
+  });
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 text-white">
       <div className="flex justify-between items-center">
         <Badge variant="outline">Last updated: {lastUpdatedDate}</Badge>
       </div>
 
-      {/* Market Overview Cards */}
+      {/* Info Cards */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
         <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">
-              Market Outlook
-            </CardTitle>
-            <OutlookIcon className={`h-4 w-4 ${outlookColor}`} />
-          </CardHeader>
           <CardContent>
+            <div className="flex justify-between items-center mb-2">
+              <h4 className="text-sm font-medium">Market Outlook</h4>
+              <OutlookIcon className={`h-4 w-4 ${outlookColor}`} />
+            </div>
             <div className="text-2xl font-bold">{insights.marketOutlook}</div>
-            <p className="text-xs text-muted-foreground">
-              Next update {nextUpdateDistance}
-            </p>
+            <p className="text-xs text-gray-400">Next update {nextUpdateDistance}</p>
           </CardContent>
         </Card>
 
         <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">
-              Industry Growth
-            </CardTitle>
-            <TrendingUp className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">
-              {insights.growthRate.toFixed(1)}%
+            <div className="flex justify-between items-center mb-2">
+              <h4 className="text-sm font-medium">Industry Growth</h4>
+              <TrendingUp className="h-4 w-4 text-gray-400" />
             </div>
+            <div className="text-2xl font-bold">{insights.growthRate.toFixed(1)}%</div>
             <Progress value={insights.growthRate} className="mt-2" />
           </CardContent>
         </Card>
 
         <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Demand Level</CardTitle>
-            <BriefcaseIcon className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
           <CardContent>
+            <div className="flex justify-between items-center mb-2">
+              <h4 className="text-sm font-medium">Demand Level</h4>
+              <BriefcaseIcon className="h-4 w-4 text-gray-400" />
+            </div>
             <div className="text-2xl font-bold">{insights.demandLevel}</div>
-            <div
-              className={`h-2 w-full rounded-full mt-2 ${getDemandLevelColor(
-                insights.demandLevel
-              )}`}
-            />
+            <div className={`h-2 w-full rounded-full mt-2 ${getDemandLevelColor(insights.demandLevel)}`} />
           </CardContent>
         </Card>
 
         <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Top Skills</CardTitle>
-            <Brain className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
           <CardContent>
+            <div className="flex justify-between items-center mb-2">
+              <h4 className="text-sm font-medium">Top Skills</h4>
+              <Brain className="h-4 w-4 text-gray-400" />
+            </div>
             <div className="flex flex-wrap gap-1">
               {insights.topSkills.map((skill) => (
-                <Badge key={skill} variant="secondary">
-                  {skill}
-                </Badge>
+                <Badge key={skill} variant="secondary">{skill}</Badge>
               ))}
             </div>
           </CardContent>
         </Card>
       </div>
 
-      {/* Salary Ranges Chart */}
-      <Card className="col-span-4">
-        <CardHeader>
-          <CardTitle>Salary Ranges by Role</CardTitle>
-          <CardDescription>
-            Displaying minimum, median, and maximum salaries (in thousands)
-          </CardDescription>
-        </CardHeader>
+      {/* Salary Chart */}
+      <Card>
         <CardContent>
+          <h3 className="text-xl font-semibold mb-2">Salary Ranges by Role</h3>
+          <p className="text-sm text-gray-400 mb-4">
+            Displaying minimum, median, and maximum salaries (in thousands)
+          </p>
           <div className="h-[400px]">
             <ResponsiveContainer width="100%" height="100%">
               <BarChart data={salaryData}>
                 <CartesianGrid strokeDasharray="3 3" />
-                <XAxis dataKey="name" />
-                <YAxis />
+                <XAxis dataKey="name" stroke="#ccc" />
+                <YAxis stroke="#ccc" />
                 <Tooltip
                   content={({ active, payload, label }) => {
                     if (active && payload && payload.length) {
                       return (
-                        <div className="bg-background border rounded-lg p-2 shadow-md">
-                          <p className="font-medium">{label}</p>
+                        <div className="bg-black border text-white p-2 rounded shadow-md">
+                          <p className="font-semibold">{label}</p>
                           {payload.map((item) => (
                             <p key={item.name} className="text-sm">
-                              {item.name}: ${item.value}K
+                              {item.name}: ₹{item.value}K
                             </p>
                           ))}
                         </div>
@@ -184,20 +201,15 @@ const DashboardView = ({ insights }) => {
         </CardContent>
       </Card>
 
-      {/* Industry Trends */}
+      {/* Trends & Recommendations */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <Card>
-          <CardHeader>
-            <CardTitle>Key Industry Trends</CardTitle>
-            <CardDescription>
-              Current trends shaping the industry
-            </CardDescription>
-          </CardHeader>
           <CardContent>
+            <h3 className="text-xl font-semibold mb-2">Key Industry Trends</h3>
             <ul className="space-y-4">
               {insights.keyTrends.map((trend, index) => (
                 <li key={index} className="flex items-start space-x-2">
-                  <div className="h-2 w-2 mt-2 rounded-full bg-primary" />
+                  <div className="h-2 w-2 mt-2 rounded-full bg-blue-500" />
                   <span>{trend}</span>
                 </li>
               ))}
@@ -206,16 +218,11 @@ const DashboardView = ({ insights }) => {
         </Card>
 
         <Card>
-          <CardHeader>
-            <CardTitle>Recommended Skills</CardTitle>
-            <CardDescription>Skills to consider developing</CardDescription>
-          </CardHeader>
           <CardContent>
+            <h3 className="text-xl font-semibold mb-2">Recommended Skills</h3>
             <div className="flex flex-wrap gap-2">
               {insights.recommendedSkills.map((skill) => (
-                <Badge key={skill} variant="outline">
-                  {skill}
-                </Badge>
+                <Badge key={skill} variant="outline">{skill}</Badge>
               ))}
             </div>
           </CardContent>
@@ -226,3 +233,7 @@ const DashboardView = ({ insights }) => {
 };
 
 export default DashboardView;
+
+
+
+

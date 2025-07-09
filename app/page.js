@@ -22,8 +22,10 @@ import { howItWorks } from "@/data/howItWorks";
 
 export default function LandingPage() {
   return (
+     
     <>
-      <div ></div>
+    {/* <div className=" "> */}
+      <div></div>
       {/* className="grid-background" */}
 
       {/* Hero Section */}
@@ -32,14 +34,8 @@ export default function LandingPage() {
       {/* Features Section */}
       <section className="w-full py-12 md:py-24 lg:py-32 ">
         <div className="container mx-auto px-4 md:px-6">
-           <h2 className="text-3xl font-bold text-white mb-4">
-    Struggling With Your Job Search?
-  </h2>
-  <p className="text-gray-300 text-base mb-6">
-    ✓ Writing your first resume? <br />
-    ✓ Finding interview questions? <br />
-    ✓ Crafting a cover letter? We’ve got you covered.
-  </p>
+           
+           
           <h2 className="text-3xl font-bold tracking-tighter text-center mb-12">
             Powerful Features for Your Career Growth
           </h2>
@@ -47,11 +43,9 @@ export default function LandingPage() {
             {features.map((feature, index) => (
               <Card
                 key={index}
-                  className="p-0 border-2 border-gray-300 hover:border-gray-200 
+                className="p-0 border-2 border-gray-300 hover:border-gray-200 
            rounded-xl shadow-lg hover:shadow-xl 
            hover:scale-105 transition-all duration-300 ease-in-out"
-
-
               >
                 <CardContent className="h-full bg-[#1e293b] pt-6 text-center flex flex-col items-center rounded-xl shadow-lg hover:shadow-xl  ">
                   <div className=" flex flex-col items-center justify-center ">
@@ -123,7 +117,6 @@ export default function LandingPage() {
         <div className="container mx-auto px-4 md:px-6">
           <h2 className="text-3xl font-bold text-center mb-12">
             “Smarter tools for smarter careers — from analysis to action.”
-
           </h2>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-6xl mx-auto">
             {testimonial.map((testimonial, index) => (
@@ -168,11 +161,10 @@ export default function LandingPage() {
           </div>
         </div>
 
-
         <p className="text-xs text-gray-400 text-center mt-2">
-            *Testimonials are shared by real students from Rungta College of Engineering who tried the platform during development.
-          </p>
-
+          *Testimonials are shared by real students from Rungta College of
+          Engineering who tried the platform during development.
+        </p>
       </section>
 
       {/* FAQ Section */}
@@ -188,7 +180,7 @@ export default function LandingPage() {
           </div>
 
           <div className="max-w-3xl mx-auto">
-             <Accordion faqs={faqs} />
+            <Accordion faqs={faqs} />
           </div>
         </div>
       </section>
@@ -201,16 +193,18 @@ export default function LandingPage() {
               Ready to Accelerate Your Career?
             </h2>
             <p className="mx-auto max-w-[600px] text-black md:text-xl">
-              Built for students. Trusted by students. Designed to land your first tech job.
+              Built for students. Trusted by students. Designed to land your
+              first tech job.
             </p>
             <Link href="/dashboard" passHref>
-             <Button className="mt-5 animate-bounce text-white bg-black  ">
+              <Button className="mt-5 animate-bounce text-white bg-black  ">
                 Start Your Journey Today <ArrowRight className="ml-2 h-4 w-4" />
               </Button>
             </Link>
           </div>
         </div>
       </section>
+    {/* </div> */}
     </>
   );
 }
